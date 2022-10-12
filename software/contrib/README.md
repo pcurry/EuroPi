@@ -11,7 +11,7 @@ A probability script based on Mutable Instruments Branches
 Two channels of probability-based routing, where the digital input will be routed to one of two outputs based on a weighted random chance, controlled by a knob per channel, and the analogue input for channel 1
 
 *Author: [Bridgee](https://github.com/Bridgee)*
-<br>*Labels: Random*
+<br>*Labels: random*
 
 ### Consequencer \[ [documentation](/software/contrib/consequencer.md) | [script](/software/contrib/consequencer.md) \]
 A gate and CV sequencer inspired by Mutable Instruments Grids and the Music Thing Modular Turing Machine
@@ -19,7 +19,7 @@ A gate and CV sequencer inspired by Mutable Instruments Grids and the Music Thin
 Users can morph between patterns and CV sequences during operation, with 3 gate and 3 CV outputs based on the current pattern, programmed randomness, and CV input, running from an external clock
 
 *Author: [gamecat69](https://github.com/gamecat69)*
-<br>*Labels: sequencer, gates, triggers, drums, randomness*
+<br>*Labels: drums, gates, randomness, sequencer, triggers*
 
 ### CVecorder \[ [documentation](/software/contrib/cvecorder.md) | [script](/software/contrib/cvecorder.py) \]
 6 channels of control voltage recording
@@ -28,7 +28,7 @@ Record 6 banks of 6 channels of control voltage, and then play them back at a co
 Recording of CV can be primed so that you can record a movement without missing a beat
 
 *Author: [anselln](https://github.com/anselln)*
-<br>*Labels: sequencer, CV, performance*
+<br>*Labels: CV, performance, sequencer*
 
 ### Hamlet \[ [documentation](/software/contrib/hamlet.md) | [script](/software/contrib/hamlet.py) \]
 A variation of the Consequencer script specifically geared towards driving voices
@@ -37,7 +37,7 @@ A variation of the Consequencer script specifically geared towards driving voice
 As with the consequencer, the patterns can be smoothly morphed between while performing
 
 *Author: [seanbechhofer](https://github.com/seanbechhofer)*
-<br>*Labels: sequencer, gates, triggers, drums, randomness*
+<br>*Labels: drums, gates, randomness, sequencer, triggers*
 
 ### Harmonic LFOs \[ [documentation](/software/contrib/harmonic_lfos.md) | [script](/software/contrib/harmonic_lfos.py) \]
 6 tempo-related LFOs with adjustable wave shape
@@ -79,7 +79,7 @@ Creates interesting polyrhythmic gate patterns while also allowing probabilities
 Given values for and upper and lower rhythmic ratios, Probapoly will create a looping pattern as short as possible with no repetition of the pattern within the loop.
 
 *Author: [gamecat69](https://github.com/gamecat69)*
-<br>*Labels: sequencer, performance, gates, polyrhythm, probability*
+<br>*Labels:  gates, performance, polyrhythm, probability, sequencer*
 
 ### Radio Scanner \[ [documentation](/software/contrib/radio_scanner.md) | [script](/software/contrib/radio_scanner.py) \]
 A tool for exploring sounds and control voltage combinations by navigating a 2D plane
@@ -113,7 +113,7 @@ A script meant to recreate the [Music Thing Modular Turning Machine Random Seque
 as faithfully as possible on the EuroPi hardware.
 
 *Author: [mjaskula](https://github.com/mjaskula)*
-<br>*Labels: sequencer, random, triggers*
+<br>*Labels: random, sequencer, triggers*
 
 ---
 
@@ -126,7 +126,7 @@ A probability utility with an output based on a percentage choice between 1 or 0
 Using the threshold knob and analogue input, users can determine whether a 1 or a 0 is preferred by the weighted random choice each time the digital input is triggered, or an internal clock depending on the mode
 
 *Author: [awonak](https://github.com/awonak)*
-<br>*Labels: Clock, Random, CV Generation*
+<br>*Labels: clock, CV generation, random*
 
 ### Diagnostic \[ [documentation](/software/contrib/diagnostic.md) | [script](/software/contrib/diagnostic.py) \]
 Test the hardware of the module
