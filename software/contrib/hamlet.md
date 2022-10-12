@@ -4,7 +4,7 @@ author: Sean Bechhofer (github.com/seanbechhofer)
 
 date: 2022-04-16
 
-labels: sequencer, gates, triggers, drums, randomness
+labels: drums, gates, randomness, sequencer, triggers
 
 **TB or not TB?**
 

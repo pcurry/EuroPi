@@ -6,7 +6,7 @@ author: Nik Ansell (github.com/gamecat69)
 
 date: 2022-04-13
 
-labels: sequencer, CV, performance
+labels: CV, performance, sequencer
 
 CVecorder is a 6 bank, 6 channel CV recording and playback program that runs on the EuroPi from [Allen-Synthesis](https://github.com/Allen-Synthesis/EuroPi). It can be used to control the CV of any module in a really fine-grained way, rather than spending time creating CV patterns with sequencers, envelopes or LFOs, you simply record the exact CV pattern you want and have this played back into your modules.
 

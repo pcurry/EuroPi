@@ -4,7 +4,7 @@ author: Nik Ansell (github.com/gamecat69)
 
 date: 2022-02-09
 
-labels: sequencer, gates, triggers, drums, randomness
+labels: drums, gates, randomness, sequencer, triggers
 
 Consequencer is a gate and stepped CV sequencer inspired by Grids from Mutable Instruments and the randomness created by the Turing Machine.
 Pattern changes and randomness are introduced as a consequence of both manual input and control voltages sent to the analogue input.
