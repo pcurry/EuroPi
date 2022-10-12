@@ -4,14 +4,14 @@ author: Bridgee
 
 date: 03/13/22
 
-labels: Random
+labels: random
 
 ### General
 This app is based on Mutable Instruments Branches. Because EuroPi only have a pair of digital/analogue inputs, the dual Bernoulli gates share the same clock (from the digital input), and only one Bernoulli gate have CV input.
 
 A Bernoulli gate takes a logic signal (trigger or gate) as an input, and routes it to either of its two outputs according to a random coin toss.
 
-Knob 1 adjusts the probability of the Bernoulli gate 1, and Knob 2 adjusts the probability of the Bernoulli gate 2. 
+Knob 1 adjusts the probability of the Bernoulli gate 1, and Knob 2 adjusts the probability of the Bernoulli gate 2.
 
 Button 1 switches the mode of gate 1 between trigger mode, toggle mode, and gate mode (latch mode), and Button 2 switches the mode of gate 2 between trigger mode, toggle mode, and gate mode (latch mode).
 
