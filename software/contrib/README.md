@@ -11,7 +11,7 @@ A probability script based on Mutable Instruments Branches
 Two channels of probability-based routing, where the digital input will be routed to one of two outputs based on a weighted random chance, controlled by a knob per channel, and the analogue input for channel 1
 
 *Author: [Bridgee](https://github.com/Bridgee)*
-*Labels: Random*
+<br>*Labels: Random*
 
 ### Consequencer \[ [documentation](/software/contrib/consequencer.md) | [script](/software/contrib/consequencer.md) \]
 A gate and CV sequencer inspired by Mutable Instruments Grids and the Music Thing Modular Turing Machine
@@ -19,7 +19,7 @@ A gate and CV sequencer inspired by Mutable Instruments Grids and the Music Thin
 Users can morph between patterns and CV sequences during operation, with 3 gate and 3 CV outputs based on the current pattern, programmed randomness, and CV input, running from an external clock
 
 *Author: [gamecat69](https://github.com/gamecat69)*
-*Labels: sequencer, gates, triggers, drums, randomness*
+<br>*Labels: sequencer, gates, triggers, drums, randomness*
 
 ### CVecorder \[ [documentation](/software/contrib/cvecorder.md) | [script](/software/contrib/cvecorder.py) \]
 6 channels of control voltage recording
@@ -28,7 +28,7 @@ Record 6 banks of 6 channels of control voltage, and then play them back at a co
 Recording of CV can be primed so that you can record a movement without missing a beat
 
 *Author: [anselln](https://github.com/anselln)*
-*Labels: sequencer, CV, performance*
+<br>*Labels: sequencer, CV, performance*
 
 ### Hamlet \[ [documentation](/software/contrib/hamlet.md) | [script](/software/contrib/hamlet.py) \]
 A variation of the Consequencer script specifically geared towards driving voices
@@ -37,7 +37,7 @@ A variation of the Consequencer script specifically geared towards driving voice
 As with the consequencer, the patterns can be smoothly morphed between while performing
 
 *Author: [seanbechhofer](https://github.com/seanbechhofer)*
-*Labels: sequencer, gates, triggers, drums, randomness*
+<br>*Labels: sequencer, gates, triggers, drums, randomness*
 
 ### Harmonic LFOs \[ [documentation](/software/contrib/harmonic_lfos.md) | [script](/software/contrib/harmonic_lfos.py) \]
 6 tempo-related LFOs with adjustable wave shape
@@ -46,7 +46,7 @@ Users can run up to 6 LFOs with one internal master clock, with wave shapes of e
 The division of the master clock that each LFO runs at, as well as each of their wave shapes, can be adjusted during operation
 
 *Author: [roryjamesallen](https://github.com/roryjamesallen)*
-*Labels: LFO*
+<br>*Labels: LFO*
 
 ### Noddy Holder \[ [documentation](/software/contrib/noddy_holder.md) | [script](/software/contrib/noddy_holder.py) \]
 Two channels of sample/track and hold based on a single trigger and CV source
@@ -54,7 +54,7 @@ Two channels of sample/track and hold based on a single trigger and CV source
 Users have a copy of the original trigger signal, a sample and hold and a track and hold of the analogue input, and the all above but with the gate inverted, available from the CV outputs
 
 *Author: [seanbechhofer](https://github.com/seanbechhofer)*
-*Labels: gates, sample&hold, track&hold*
+<br>*Labels: gates, sample&hold, track&hold*
 
 ### Poly Square \[ [documentation](/software/contrib/poly_square.md) | [script](/software/contrib/poly_square.py) \]
 Six independent oscillators which output on CVs 1-6.
@@ -62,7 +62,7 @@ Six independent oscillators which output on CVs 1-6.
 The base pitch is set by the analog input, which is interpreted as a V/oct input with 0V = C. Knob 1 allows for detuning of the 6 voices, and as the knob is turned clockwise, the spread between them increases. Button 2 toggles the maximum detune between a half step and a major 9th. Knob 2 sets the polyphony mode.
 
 *Author: [t-schreibs](https://github.com/t-schreibs)*
-*Labels: oscillator, poly*
+<br>*Labels: oscillator, poly*
 
 ### Polyrhythmic Sequencer \[ [script](/software/contrib/polyrhythmic_sequencer.py) \]
 A sequencer that advances notes according to a polyrhythmic clock, inspired by the operation of the Moog Subharmonicon sequencer
@@ -71,7 +71,7 @@ Users can run two simultaneous polyrhythmic sequences clocked by the same extern
 Quantised outputs are available, with the note for each step, and the polyrhythm it runs at, being easily changed to write the sequence
 
 *Author: [awonak](https://github.com/awonak)*
-*Labels: polyrhythms, sequencer, triggers*
+<br>*Labels: polyrhythms, sequencer, triggers*
 
 ### Probapoly \[ [documentation](/software/contrib/probapoly.md) | [script](/software/contrib/probapoly.py) \]
 Creates interesting polyrhythmic gate patterns while also allowing probabilities to be set on gates.
@@ -79,7 +79,7 @@ Creates interesting polyrhythmic gate patterns while also allowing probabilities
 Given values for and upper and lower rhythmic ratios, Probapoly will create a looping pattern as short as possible with no repetition of the pattern within the loop.
 
 *Author: [gamecat69](https://github.com/gamecat69)*
-*Labels: sequencer, performance, gates, polyrhythm, probability*
+<br>*Labels: sequencer, performance, gates, polyrhythm, probability*
 
 ### Radio Scanner \[ [documentation](/software/contrib/radio_scanner.md) | [script](/software/contrib/radio_scanner.py) \]
 A tool for exploring sounds and control voltage combinations by navigating a 2D plane
@@ -89,7 +89,7 @@ There is also a CV output for the difference between the two knob positions, and
 The outputs can also be rotated as inspired by the 4MS Rotating Clock Divider
 
 *Author: [roryjamesallen](https://github.com/roryjamesallen)*
-*Labels: n/a*
+<br>*Labels: n/a*
 
 ### Smooth Random Voltages \[ [script](/software/contrib/smooth_random_voltages.py) \]
 Random CV with adjustable slew rate, inspired by: https://youtu.be/tupkx3q7Dyw.
@@ -98,7 +98,7 @@ Random CV with adjustable slew rate, inspired by: https://youtu.be/tupkx3q7Dyw.
 towards target voltage according to slew rate set by knob 1. Bottom row outputs immediately change to new target voltage.
 
 *Author: [awonak](https://github.com/awonak)*
-*Labels: random, s&h*
+<br>*Labels: random, s&h*
 
 ### Strange Attractor \[ [documentation](/software/contrib/strange_attractor.md) | [script](/software/contrib/strange_attractor.py) \]
 A source of chaotic modulation using systems of differential equations such as the Lorenz System
@@ -106,14 +106,14 @@ A source of chaotic modulation using systems of differential equations such as t
 Users have the x, y, and z values of the output of each attractor model available as CV outputs, as well as 3 gate signals related to the relationships between these values
 
 *Author: [seanbechhofer](https://github.com/seanbechhofer)*
-*Labels: gates, triggers, randomness*
+<br>*Labels: gates, triggers, randomness*
 
 ### Turing Machine \[ [documentation](/software/contrib/turing_machine.md) | [script](/software/contrib/turing_machine.py) \]
 A script meant to recreate the [Music Thing Modular Turning Machine Random Sequencer](https://musicthing.co.uk/pages/turing.html)
 as faithfully as possible on the EuroPi hardware.
 
 *Author: [mjaskula](https://github.com/mjaskula)*
-*Labels: sequencer, random, triggers*
+<br>*Labels: sequencer, random, triggers*
 
 ---
 
@@ -126,7 +126,7 @@ A probability utility with an output based on a percentage choice between 1 or 0
 Using the threshold knob and analogue input, users can determine whether a 1 or a 0 is preferred by the weighted random choice each time the digital input is triggered, or an internal clock depending on the mode
 
 *Author: [awonak](https://github.com/awonak)*
-*Labels: Clock, Random, CV Generation*
+<br>*Labels: Clock, Random, CV Generation*
 
 ### Diagnostic \[ [documentation](/software/contrib/diagnostic.md) | [script](/software/contrib/diagnostic.py) \]
 Test the hardware of the module
@@ -135,7 +135,7 @@ The values of all inputs are shown on the display, and the outputs are set to fi
 Users can rotate the outputs to ensure they each output the same voltage when sent the same instruction from the script
 
 *Author: [mjaskula](https://github.com/mjaskula)*
-*Labels: utility*
+<br>*Labels: utility*
 
 ### Hello World \[ [script](/software/contrib/hello_world.py) \]
 An example script for the menu system
@@ -143,7 +143,7 @@ An example script for the menu system
 This script can be copied and altered as a starting point for your own scripts that are to be menu compatible, and make use of the save state functionality
 
 *Author: [mjaskula](https://github.com/mjaskula)*
-*Labels: example*
+<br>*Labels: example*
 
 ### Scope \[ [script](/software/contrib/scope.py) \]
 An oscilloscope script to monitor the analogue and digital inputs
@@ -151,6 +151,6 @@ An oscilloscope script to monitor the analogue and digital inputs
 The current values of the analogue and digital inputs are displayed in an oscilloscope style on the OLED display, and copies of both signals, as well as an inverted gate signal, are available from the CV outputs
 
 *Author: [mjaskula](https://github.com/mjaskula)*
-*Labels: utility*
+<br>*Labels: utility*
 
 </details>
