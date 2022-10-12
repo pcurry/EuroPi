@@ -4,7 +4,7 @@ author: awonak
 
 date: 03/01/22
 
-labels: Clock, Random, CV Generation
+labels: clock, CV generation, random
 
 Two pairs of clocked probability gates.
 
