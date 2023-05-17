@@ -1,7 +1,17 @@
-from europi import *
-from time import sleep_ms, ticks_ms, ticks_add, ticks_diff
-from europi_script import EuroPiScript
+
+# Author: Bridgee
+#
+# Refactored by: pcurry
+
+
 import machine
+
+
+from time import sleep_ms, ticks_ms, ticks_add, ticks_diff
+
+from europi import *
+from europi_script import EuroPiScript
+
 
 # Internal clock tempo range.
 EUCLIDEAN_MAX_BPM = 280
@@ -10,14 +20,32 @@ EUCLIDEAN_MIN_BPM = 20
 # Trigger Time (some module may not be able to catch up the trigger if it is too short)
 EUCLIDEAN_TRG_T = 20
 
+SEQ_LENGTH_MAX = 19
+SEQ_LENGTH_MIN = 1
+
+SEQ_FILL_MIN = 0
+SEQ_FILL_MAX = 1
+
+SEQ_OFFSET_MIN = 0
+
+ONE_THIRD_OLED_WIDTH = int(OLED_WIDTH/3)
+TWO_THIRDS_OLED_WIDTH = ONE_THIRD_OLED_WIDTH * 2
+HALF_OLED_HEIGHT = int(OLED_HEIGHT/2)
+
+
+def bounded_parameter(param, lower_bound=0, upper_bound=1):
+    bounded = min((param, upper_bound))
+    return max((bounded, lower_bound))
+
+
 class SingleEuclideanGate():
     def __init__(self, box_position, output, box_size, indicator_offset_x, indicator_offset_y, bar_length_on, bar_length_off, cv_text_offset, cv_text):
         self.notes_para = [1, 0, 0, 0] # length, fill, offset, cv
         self.notes_para_final = [1, 0, 0] # length, fill, offset
         self.notes_list = []
         self.step = 0
-        
-        self.box_position = box_position
+
+        self.box_x, self.box_y = box_position
         self.output = output
         self.box_size = box_size
         self.indicator_offset_x = indicator_offset_x
@@ -28,109 +56,90 @@ class SingleEuclideanGate():
         self.cv_text = cv_text
 
     def para_add_cv(self, cv_value):
-        if self.notes_para[3] == 1:
-            self.notes_para_final[0] = self.notes_para[0] + cv_value
-            self.notes_para_final[1] = self.notes_para[1]
-            self.notes_para_final[2] = self.notes_para[2]
-        elif self.notes_para[3] == 2:
-            self.notes_para_final[0] = self.notes_para[0]
-            self.notes_para_final[1] = self.notes_para[1] + cv_value
-            self.notes_para_final[2] = self.notes_para[2]
-        elif self.notes_para[3] == 3:
-            self.notes_para_final[0] = self.notes_para[0]
-            self.notes_para_final[1] = self.notes_para[1]
-            self.notes_para_final[2] = self.notes_para[2] + cv_value
-        else:
-            self.notes_para_final[0] = self.notes_para[0]
-            self.notes_para_final[1] = self.notes_para[1]
-            self.notes_para_final[2] = self.notes_para[2]
+        self.notes_para_final = self.notes_para[:3]
+        if self.notes_para[3] in (1, 2, 3):
+            self.notes_para_final[self.notes_para[3]] += cv_value
 
     def bound_notes_para(self):
         # Bound L
-        if self.notes_para[0] > 19: self.notes_para[0] = 19
-        if self.notes_para[0] < 1: self.notes_para[0] = 1
+        self.notes_para[0] = bounded_parameter(self.notes_para[0], lower_bound=L_MIN, upper_bound=L_MAX)
+
         # Bound F
-        if self.notes_para[1] > self.notes_para[0]: 
-            self.notes_para[1] = self.notes_para[0]
-        if self.notes_para[0] > 1:
-            if self.notes_para[1] < 1: self.notes_para[1] = 1
-        else:
-            if self.notes_para[1] < 0: self.notes_para[1] = 0
+        self.notes_para[1] = bounded_parameter(self.notes_para[1])
+
         # Bound O
-        if self.notes_para[2] > self.notes_para[0]: self.notes_para[2] = self.notes_para[0]
-        if self.notes_para[2] < 0: self.notes_para[2] = 0
+        self.notes_para[2] = bounded_parameter(self.notes_para[2], upper_bound=self.notes_para[0])
+
         # Bound CV
-        if self.notes_para[3] > 3: self.notes_para[3] = 3
-        if self.notes_para[3] < 0: self.notes_para[3] = 0
+        self.notes_para[3] = bounded_parameter(self.notes_para[3], upper_bound=3)
 
     def bound_notes_para_final(self):
         # Bound L
-        if self.notes_para_final[0] > 19: self.notes_para_final[0] = 19
-        if self.notes_para_final[0] < 1: self.notes_para_final[0] = 1
+        self.notes_para_final[0] = bounded_parameter(self.notes_para_final[0], lower_bound=L_MIN, upper_bound=L_MAX)
+
         # Bound F
-        if self.notes_para_final[1] > self.notes_para_final[0]: 
-            self.notes_para_final[1] = self.notes_para_final[0]
-        if self.notes_para_final[0] > 1:
-            if self.notes_para_final[1] < 1: self.notes_para_final[1] = 1
-        else:
-            if self.notes_para_final[1] < 0: self.notes_para_final[1] = 0
+        self.notes_para_final[1] = bounded_parameter(self.notes_para_final[1])
+
         # Bound O
-        if self.notes_para_final[2] > self.notes_para_final[0]: self.notes_para_final[2] = self.notes_para_final[0]
-        if self.notes_para_final[2] < 0: self.notes_para_final[2] = 0
+        self.notes_para_final[2] = bounded_parameter(self.notes_para_final[2], upper_bound=self.notes_para_final[0])
+
 
     def draw_para_indicator(self, para_idx):
         for cur_para_idx in range(para_idx + 1):
-            oled.fill_rect(self.box_position[0] + self.indicator_offset_x[cur_para_idx], 
-                           self.box_position[1] + self.indicator_offset_y[cur_para_idx], 
+            oled.fill_rect(self.box_position[0] + self.indicator_offset_x[cur_para_idx],
+                           self.box_position[1] + self.indicator_offset_y[cur_para_idx],
                            2, 2, 1)
         if para_idx == 3:
-            oled.text(self.cv_text[self.notes_para[3]], 
-                      self.box_position[0] + self.cv_text_offset[0], 
-                      self.box_position[1] + self.cv_text_offset[1], 
+            oled.text(self.cv_text[self.notes_para[3]],
+                      self.box_position[0] + self.cv_text_offset[0],
+                      self.box_position[1] + self.cv_text_offset[1],
                       1)
 
     def draw_notes(self):
+        box_pos_0 = self.box_position[0] + 2
+        box_pos_1 = self.box_position[1] + 5
+
         for i in range(len(self.notes_list)):
             # High
             if self.notes_list[i] == 1:
                 if len(self.notes_list) < 10:
                     if i != self.step:
-                        oled.fill_rect(self.box_position[0] + 2 + i * 4, self.box_position[1] + 5, 3, self.box_size[1] - 5, 1)
+                        oled.fill_rect(box_pos_0 + i * 4, box_pos_1, 3, self.box_size[1] - 5, 1)
                     else:
-                        oled.fill_rect(self.box_position[0] + 2 + i * 4, self.box_position[1] + 8, 3, self.box_size[1] - 8, 1)
-                        oled.fill_rect(self.box_position[0] + 2 + i * 4, self.box_position[1] + 5, 3, 2, 1)
+                        oled.fill_rect(box_pos_0 + i * 4, box_pos_1 + 3, 3, self.box_size[1] - 8, 1)
+                        oled.fill_rect(box_pos_0 + i * 4, box_pos_1, 3, 2, 1)
                 elif len(self.notes_list) < 14:
                     if i != self.step:
-                        oled.fill_rect(self.box_position[0] + 2 + i * 3, self.box_position[1] + 5, 2, self.box_size[1] - 5, 1)
+                        oled.fill_rect(box_pos_0 + i * 3, box_pos_1, 2, self.box_size[1] - 5, 1)
                     else:
-                        oled.fill_rect(self.box_position[0] + 2 + i * 3, self.box_position[1] + 8, 2, self.box_size[1] - 8, 1)
-                        oled.fill_rect(self.box_position[0] + 2 + i * 3, self.box_position[1] + 5, 2, 2, 1)
+                        oled.fill_rect(box_pos_0 + i * 3, box_pos_1 + 3, 2, self.box_size[1] - 8, 1)
+                        oled.fill_rect(box_pos_0 + i * 3, box_pos_1, 2, 2, 1)
                 elif len(self.notes_list) < 20:
                     if i != self.step:
-                        oled.fill_rect(self.box_position[0] + 2 + i * 2, self.box_position[1] + 5, 1, self.box_size[1] - 5, 1)
+                        oled.fill_rect(box_pos_0 + i * 2, box_pos_1, 1, self.box_size[1] - 5, 1)
                     else:
-                        oled.fill_rect(self.box_position[0] + 2 + i * 2, self.box_position[1] + 8, 1, self.box_size[1] - 8, 1)
-                        oled.fill_rect(self.box_position[0] + 2 + i * 2, self.box_position[1] + 5, 1, 2, 1)
+                        oled.fill_rect(box_pos_0 + i * 2, box_pos_1 + 3, 1, self.box_size[1] - 8, 1)
+                        oled.fill_rect(box_pos_0 + i * 2, box_pos_1, 1, 2, 1)
             # Low
             else:
                 if len(self.notes_list) < 10:
                     if i != self.step:
-                        oled.fill_rect(self.box_position[0] + 2 + i * 4, self.box_position[1] + 12, 3, self.box_size[1] - 12, 1)
+                        oled.fill_rect(box_pos_0 + i * 4, box_pos_1 + 7, 3, self.box_size[1] - 12, 1)
                     else:
-                        oled.fill_rect(self.box_position[0] + 2 + i * 4, self.box_position[1] + 15, 3, self.box_size[1] - 15, 1)
-                        oled.fill_rect(self.box_position[0] + 2 + i * 4, self.box_position[1] + 12, 3, 2, 1)
+                        oled.fill_rect(box_pos_0 + i * 4, box_pos_1 + 10, 3, self.box_size[1] - 15, 1)
+                        oled.fill_rect(box_pos_0 + i * 4, box_pos_1 + 7, 3, 2, 1)
                 elif len(self.notes_list) < 14:
                     if i != self.step:
-                        oled.fill_rect(self.box_position[0] + 2 + i * 3, self.box_position[1] + 12, 2, self.box_size[1] - 12, 1)
+                        oled.fill_rect(box_pos_0 + i * 3, box_pos_1 + 7, 2, self.box_size[1] - 12, 1)
                     else:
-                        oled.fill_rect(self.box_position[0] + 2 + i * 3, self.box_position[1] + 15, 2, self.box_size[1] - 15, 1)
-                        oled.fill_rect(self.box_position[0] + 2 + i * 3, self.box_position[1] + 12, 2, 2, 1)
+                        oled.fill_rect(box_pos_0 + i * 3, box_pos_1 + 10, 2, self.box_size[1] - 15, 1)
+                        oled.fill_rect(box_pos_0 + i * 3, box_pos_1 + 7, 2, 2, 1)
                 elif len(self.notes_list) < 20:
                     if i != self.step:
-                        oled.fill_rect(self.box_position[0] + 2 + i * 2, self.box_position[1] + 12, 1, self.box_size[1] - 12, 1)
+                        oled.fill_rect(box_pos_0 + i * 2, box_pos_1 + 7, 1, self.box_size[1] - 12, 1)
                     else:
-                        oled.fill_rect(self.box_position[0] + 2 + i * 2, self.box_position[1] + 15, 1, self.box_size[1] - 15, 1)
-                        oled.fill_rect(self.box_position[0] + 2 + i * 2, self.box_position[1] + 12, 1, 2, 1)
+                        oled.fill_rect(box_pos_0 + i * 2, box_pos_1 + 10, 1, self.box_size[1] - 15, 1)
+                        oled.fill_rect(box_pos_0 + i * 2, box_pos_1 + 7, 1, 2, 1)
 
     def draw_box(self):
         oled.rect(self.box_position[0], self.box_position[1], self.box_size[0], self.box_size[1], 1)
@@ -156,19 +165,20 @@ class SingleEuclideanGate():
         print(self.notes_para)
         print(self.notes_para_final, '\n')
 
+
 class EuclideanRhythm(EuroPiScript):
     def __init__(self):
-        # Overclock the Pico for improved performance.
-        machine.freq(250_000_000)
-        
-        all_box_position = [[0, 0],
-                            [int(OLED_WIDTH/3), 0],
-                            [int(OLED_WIDTH/3*2), 0],
-                            [0, int(OLED_HEIGHT/2)],
-                            [int(OLED_WIDTH/3), int(OLED_HEIGHT/2)],
-                            [int(OLED_WIDTH/3*2), int(OLED_HEIGHT/2)]]
+
+        all_box_positions = [
+            [0, 0],
+            [ONE_THIRD_OLED_WIDTH, 0],
+            [TWO_THIRDS_OLED_WIDTH, 0],
+            [0, HALF_OLED_HEIGHT],
+            [ONE_THIRD_OLED_WIDTH, HALF_OLED_HEIGHT],
+            [TWO_THIRDS_OLED_WIDTH, HALF_OLED_HEIGHT]
+        ]
         output = cvs
-        box_size = [int(OLED_WIDTH/3), int(OLED_HEIGHT/2)]
+        box_size = [ONE_THIRD_OLED_WIDTH, HALF_OLED_HEIGHT]
         indicator_offset_x  = [29, 32, 35, 38]
         indicator_offset_y = [1, 1, 1, 1]
         bar_length_on = 8
@@ -176,16 +186,19 @@ class EuclideanRhythm(EuroPiScript):
         cv_text_offset = [16, 6]
         cv_text = ['-', 'L', 'F', 'O']
 
-        self.euclidean_gates = [SingleEuclideanGate(all_box_position[i], 
-                                                    output[i], 
-                                                    box_size, 
-                                                    indicator_offset_x, 
-                                                    indicator_offset_y, 
-                                                    bar_length_on, 
-                                                    bar_length_off, 
-                                                    cv_text_offset, 
-                                                    cv_text) 
-                                for i in range(6)]
+        self.euclidean_gates = [
+            SingleEuclideanGate(
+                all_box_position[i],
+                output[i],
+                box_size,
+                indicator_offset_x,
+                indicator_offset_y,
+                bar_length_on,
+                bar_length_off,
+                cv_text_offset,
+                cv_text)
+            for i in range(6)
+        ]
 
         self.cv_value = 0
         self.gate_idx = 0 # change editing gates
@@ -208,7 +221,7 @@ class EuclideanRhythm(EuroPiScript):
                 self.euclidean_gates[self.gate_idx].bound_notes_para()
             else:
                 self.external_clock = False
-        
+
         @b2.handler_falling
         def para_add():
             if self.gate_idx <= 5:
@@ -219,12 +232,12 @@ class EuclideanRhythm(EuroPiScript):
 
     def bjorklund(self, steps, pulses):
         steps = int(steps)
-        pulses = int(pulses)   
-        
-        pattern = []    
+        pulses = int(pulses)
+
+        pattern = []
         counts = []
         remainders = []
-        
+
         divisor = steps - pulses
         remainders.append(pulses)
         level = 0
@@ -236,18 +249,18 @@ class EuclideanRhythm(EuroPiScript):
             if remainders[level] <= 1:
                 break
         counts.append(divisor)
-        
+
         def build(level):
             if level == -1:
                 pattern.append(0)
             elif level == -2:
-                pattern.append(1)         
+                pattern.append(1)
             else:
                 for i in range(0, counts[level]):
                     build(level - 1)
                 if remainders[level] != 0:
                     build(level - 2)
-        
+
         build(level)
         i = pattern.index(1)
         pattern = pattern[i:] + pattern[0:i]
@@ -257,16 +270,16 @@ class EuclideanRhythm(EuroPiScript):
         if self.gate_idx == 6:
             oled.text(str(self.tempo), self.tempo_text_pos[0], self.tempo_text_pos[1], 1)
             oled.text('Ext', int(OLED_WIDTH/2) + self.tempo_text_pos[0], self.tempo_text_pos[1], 1)
-            
+
             if self.external_clock == False and self.blink_flg == 0:
-                oled.rect(self.tempo_box_pos[0], 
-                          self.tempo_box_pos[1], 
-                          self.tempo_box_size[0], 
+                oled.rect(self.tempo_box_pos[0],
+                          self.tempo_box_pos[1],
+                          self.tempo_box_size[0],
                           self.tempo_box_size[1], 1)
             if self.external_clock == True and self.blink_flg == 0:
-                oled.rect(int(OLED_WIDTH/2) + self.tempo_box_pos[0], 
-                          self.tempo_box_pos[1], 
-                          self.tempo_box_size[0], 
+                oled.rect(int(OLED_WIDTH/2) + self.tempo_box_pos[0],
+                          self.tempo_box_pos[1],
+                          self.tempo_box_size[0],
                           self.tempo_box_size[1], 1)
 
     def get_next_deadline(self):
@@ -276,7 +289,7 @@ class EuclideanRhythm(EuroPiScript):
 
     def wait(self):
         # Internal clock
-        if self.external_clock == False:
+        if not self.external_clock:
             while True:
                 if ticks_diff(self.deadline, ticks_ms()) <= 0:
                     self.deadline = self.get_next_deadline()
@@ -284,7 +297,7 @@ class EuclideanRhythm(EuroPiScript):
         # External clock
         else:
             # Loop until digital in goes high (clock pulse received).
-            while self.external_clock == True:
+            while self.external_clock:
                 if din.value() != self.prev_clock:
                     self.prev_clock = 1 if self.prev_clock == 0 else 0
                     if self.prev_clock == 0:
@@ -308,18 +321,18 @@ class EuclideanRhythm(EuroPiScript):
             else:
                 if self.blink_flg > 1:
                     self.blink_flg = 0
-            
+
             # Set CV controled parameters
             for i in range(6):
                 self.euclidean_gates[i].para_add_cv(self.cv_value)
                 self.euclidean_gates[i].bound_notes_para_final()
-            
+
             # Generate Euclidean Notes
             for i in range(6):
                 if self.euclidean_gates[i].notes_para_final[1] == 0:
                     self.euclidean_gates[i].notes_list = [0, ]
                 else:
-                    self.euclidean_gates[i].notes_list = self.bjorklund(self.euclidean_gates[i].notes_para_final[0], 
+                    self.euclidean_gates[i].notes_list = self.bjorklund(self.euclidean_gates[i].notes_para_final[0],
                                                                         self.euclidean_gates[i].notes_para_final[1])
                 # Add Offset
                 self.euclidean_gates[i].notes_list = self.euclidean_gates[i].notes_list[self.euclidean_gates[i].notes_para_final[2]:] +\
@@ -333,7 +346,7 @@ class EuclideanRhythm(EuroPiScript):
 
                 # Change Outputs
                 self.euclidean_gates[i].change_output()
-                
+
                 # Visualization
                 if self.gate_idx <= 5:
                     # Box, and editing indicator
@@ -345,27 +358,28 @@ class EuclideanRhythm(EuroPiScript):
                     else:
                         # Draw other Boxes
                         self.euclidean_gates[i].draw_box()
-                    
+
                     if self.para_idx == 3 and self.gate_idx == i:
                         pass
                     else:
                         # Draw Notes
                         self.euclidean_gates[i].draw_notes()
-                
+
                 # Increase Step
                 self.euclidean_gates[i].step_increase()
-            
+
             # Turn off outputs
             sleep_ms(EUCLIDEAN_TRG_T)
-            [o.off() for o in cvs]
+            for out in cvs:
+                out.off()
 
             # Draw tempo setting
             self.draw_tempo_setting()
-                    
-            
+
             oled.show()
             self.wait()
-                  
+
+
 if __name__ == "__main__":
     euclidean_rhythm = EuclideanRhythm()
     euclidean_rhythm.main()
